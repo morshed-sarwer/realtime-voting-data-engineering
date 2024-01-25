@@ -1,0 +1,16 @@
+venv/
+# Ignore any compiled Python files
+*.pyc
+__pycache__/
+
+# Ignore the local settings file
+.env
+
+# Ignore the Python generated cache
+.cache/
+
+# Ignore the Python logs
+*.log
+
+# Ignore the project configuration file
+.vscode/
