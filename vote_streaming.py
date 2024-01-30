@@ -89,6 +89,9 @@ turnout_by_location_to_kafka = votes_per_candidate.selectExpr("to_json(struct(*)
                         .outputMode("update") \
                             .start()
 
+votes_per_candidate_to_kafka.awaitTermination()
+turnout_by_location_to_kafka.awaitTermination()
+
 
 # votes_per_candidate = watermark_df.groupBy("candidate_id","candidate_name",
 #                                            "party_affiliation",window("voting_time","1 minute")) \
