@@ -1,4 +1,4 @@
-KAFKA_BROKER = "localhost:9092"
+KAFKA_BROKER = {'bootstrap.servers':'localhost:9092'}
 DATABASE_PARAMS = {
     'host':'localhost',
     'dbname':'voting',
@@ -6,6 +6,6 @@ DATABASE_PARAMS = {
     'password':'123'
 }
 
-# Kafka Topics
-voters_topic = 'voters_topic'
-candidates_topic = 'candidates_topic'
+
+# voters toopics name
+voter_topics = "voter_topic"

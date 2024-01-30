@@ -1,4 +1,17 @@
+from datetime import datetime
+
 def create_table(cur):
+    
+    cur.execute("""
+               
+               CREATE TABLE IF NOT EXISTS spark_table (
+                    id SERIAL PRIMARY KEY,
+                    voter_id VARCHAR(255) NOT NULL,
+                    voter_name VARCHAR(255) NOT NULL,
+                    date_of_birth VARCHAR(255) NOT NULL
+                    )
+               """)
+    
     cur.execute(
     """
     CREATE TABLE IF NOT EXISTS candidates(
@@ -44,6 +57,17 @@ def create_table(cur):
     """)
 
 
+
+def insert_vote(cur,voter_id, candidate_id,conn):
+    vote = 1
+    voting_time = datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S"),
+    cur.execute("""
+                INSERT INTO votes (voter_id, candidate_id, voting_time)
+                VALUES (%s, %s, %s)
+                """,
+                (voter_id, candidate_id,voting_time))
+    
+    conn.commit()
 def insert_voters(cur,voter):
     cur.execute("""
                         INSERT INTO voters (voter_id, voter_name, date_of_birth, gender, nationality, registration_number, address_street, address_city, address_state, address_country, address_postcode, email, phone_number, cell_number, picture, registered_age)
