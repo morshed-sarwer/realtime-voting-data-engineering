@@ -1,4 +1,5 @@
 
+import time
 import psycopg2
 from config.settings import DATABASE_PARAMS, KAFKA_BROKER,voter_topics
 from database_operations.database_setup import create_table,insert_candidates,insert_voters
@@ -26,7 +27,7 @@ if __name__ == "__main__":
             candidate = generate_candidate_data(i,3)
             # print(candidate)
             insert_candidates(cur,candidate=candidate)
-    for i in range(500):
+    for i in range(5000):
         voter_data = generate_voter_data()
         print(voter_data)
         insert_voters(cur=cur, voter=voter_data)
@@ -42,3 +43,4 @@ if __name__ == "__main__":
         print('Produced voter {}, data: {}'.format(i, voter_data))
         
         producer.flush()
+        time.sleep(3)

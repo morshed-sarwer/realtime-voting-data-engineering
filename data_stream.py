@@ -26,7 +26,26 @@ if __name__ == "__main__":
         StructField("voter_name",StringType(),True),
         StructField("voter_email",StringType(),True),
         StructField("date_of_birth",StringType(),True),
-    ])
+        StructField('campaign_platform',StringType(),True),
+        StructField('photo_url',StringType(),True),
+        StructField('date_of_birth',StringType(),True),
+        StructField('gender',StringType(),True),
+        StructField('nationality',StringType(),True),
+        StructField('registration_number',StringType(),True),
+        StructField('address',StructType([
+            StructField('street',StringType(),True),
+            StructField('city',StringType(),True),
+            StructField('state',StringType(),True),
+            StructField('country',StringType(),True),
+            StructField('postcode',StringType(),True)
+                ]),True),
+        StructField('email',StringType(),True),
+        StructField('phone_number',StringType(),True),
+        StructField('cell_number',StringType(),True),
+        StructField('picture',StringType(),True),
+        StructField('registered_age',IntegerType(),True),
+        StructField('voting_time',TimestampType(),True)
+        ])
     
     # read kafka topics
     
