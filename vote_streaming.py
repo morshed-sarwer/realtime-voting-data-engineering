@@ -9,8 +9,6 @@ spark = (SparkSession.builder
             .config("spark.jars.packages","org.apache.spark:spark-sql-kafka-0-10_2.12:3.4.0") \
                 .config("spark.jars","/Users/morshedsarwer/Documents/Data/Projects/realtime-voting-data-engineering/postgresql-42.7.1.jar") \
                     .config("spark.sql.adaptive.enabled","false") \
-                        
-        
     ).getOrCreate()
 
 # print(spark)
@@ -70,27 +68,53 @@ votes_per_candidate = watermark_df.groupBy("candidate_id","candidate_name",
                                                .agg(sum("vote").alias("total_votes"))
 turnout_by_location = watermark_df.groupBy("address.street").count().alias("total_votes")
 
+
 # kafka-console-consumer --topic votes_per_candidate --bootstrap-server broker:29092
+# votes_per_candidate_to_kafka = votes_per_candidate.selectExpr("to_json(struct(*)) AS value") \
+#     .writeStream \
+#         .format("kafka") \
+#             .option("kafka.bootstrap.servers","localhost:9092") \
+#                 .option("topic","votes_per_candidate") \
+#                     .option("checkpointLocation","/Users/morshedsarwer/Documents/Data/Projects/realtime-voting-data-engineering/checkpoints/checkpoint1") \
+#                         .outputMode("update") \
+#                             .start()
+
+# turnout_by_location_to_kafka = turnout_by_location.selectExpr("to_json(struct(*)) AS value") \
+#     .writeStream \
+#         .format("kafka") \
+#             .option("kafka.bootstrap.servers","localhost:9092") \
+#                 .option("topic","turnout_by_location") \
+#                     .option("checkpointLocation","/Users/morshedsarwer/Documents/Data/Projects/realtime-voting-data-engineering/checkpoints/checkpoint2") \
+#                         .outputMode("update") \
+#                             .start()
+
+# votes_per_candidate_to_kafka.awaitTermination()
+
+
+# to see kafka data Exec command-> kafka-console-consumer --topic votes_per_candidate --bootstrap-server broker:29092
+# Correcting Kafka bootstrap servers option
 votes_per_candidate_to_kafka = votes_per_candidate.selectExpr("to_json(struct(*)) AS value") \
     .writeStream \
-        .format("kafka") \
-            .option("kafka.bootstap.servers","localhost:9092") \
-                .option("topic","votes_per_candidate") \
-                    .option("checkpointLocation","/Users/morshedsarwer/Documents/Data/Projects/realtime-voting-data-engineering/checkpoints/checkpoint1") \
-                        .outputMode("update") \
-                            .start()
+    .format("kafka") \
+    .option("kafka.bootstrap.servers", "localhost:9092") \
+    .option("topic", "votes_per_candidate") \
+    .option("checkpointLocation", "/Users/morshedsarwer/Documents/Data/Projects/realtime-voting-data-engineering/checkpoints/checkpoint1") \
+    .outputMode("update") \
+    .start()
 
-turnout_by_location_to_kafka = votes_per_candidate.selectExpr("to_json(struct(*)) AS value") \
+# Correcting Kafka bootstrap servers option and using turnout_by_location
+turnout_by_location_to_kafka = turnout_by_location.selectExpr("to_json(struct(*)) AS value") \
     .writeStream \
-        .format("kafka") \
-            .option("kafka.bootstap.servers","localhost:9092") \
-                .option("topic","turnout_by_location") \
-                    .option("checkpointLocation","/Users/morshedsarwer/Documents/Data/Projects/realtime-voting-data-engineering/checkpoints/checkpoint2") \
-                        .outputMode("update") \
-                            .start()
+    .format("kafka") \
+    .option("kafka.bootstrap.servers", "localhost:9092") \
+    .option("topic", "turnout_by_location") \
+    .option("checkpointLocation", "/Users/morshedsarwer/Documents/Data/Projects/realtime-voting-data-engineering/checkpoints/checkpoint2") \
+    .outputMode("update") \
+    .start()
 
+# Use awaitTermination() once at the end
 votes_per_candidate_to_kafka.awaitTermination()
-turnout_by_location_to_kafka.awaitTermination()
+
 
 
 # votes_per_candidate = watermark_df.groupBy("candidate_id","candidate_name",
