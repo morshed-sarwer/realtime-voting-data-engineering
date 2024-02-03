@@ -64,7 +64,7 @@ vote_df = vote_df.withColumn("voting_time",col("voting_time").cast(TimestampType
     # 
 watermark_df = vote_df.withWatermark("voting_time","1 minute")
 votes_per_candidate = watermark_df.groupBy("candidate_id","candidate_name",
-                                           "party_affiliation") \
+                                           "party_affiliation","picture") \
                                                .agg(sum("vote").alias("total_votes"))
 turnout_by_location = watermark_df.groupBy("address.street").count().alias("total_votes")
 
@@ -92,6 +92,8 @@ turnout_by_location = watermark_df.groupBy("address.street").count().alias("tota
 
 
 # to see kafka data Exec command-> kafka-console-consumer --topic votes_per_candidate --bootstrap-server broker:29092
+# to see kafka data Exec command-> kafka-console-consumer --topic turnout_by_location --bootstrap-server broker:29092
+
 # Correcting Kafka bootstrap servers option
 votes_per_candidate_to_kafka = votes_per_candidate.selectExpr("to_json(struct(*)) AS value") \
     .writeStream \
